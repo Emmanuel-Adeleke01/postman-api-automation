@@ -1,82 +1,385 @@
 {
-	"info": {
-		"_postman_id": "43fc3c6d-1076-444b-a754-74862d3aa9db",
-		"name": "Fake Store API",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "46197961"
-	},
-	"item": [
-		{
-			"name": "Product",
-			"item": [
-				{
-					"name": "Get all products",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://fakestoreapi.com/products",
-							"protocol": "https",
-							"host": [
-								"fakestoreapi",
-								"com"
-							],
-							"path": [
-								"products"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Add a new product",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"id\": 0,\r\n  \"title\": \"string\",\r\n  \"price\": 0.1,\r\n  \"description\": \"string\",\r\n  \"category\": \"string\",\r\n  \"image\": \"http://example.com\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "https://fakestoreapi.com/products",
-							"protocol": "https",
-							"host": [
-								"fakestoreapi",
-								"com"
-							],
-							"path": [
-								"products"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get a single product",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://fakestoreapi.com/products/{id}",
-							"protocol": "https",
-							"host": [
-								"fakestoreapi",
-								"com"
-							],
-							"path": [
-								"products",
-								"{id}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		}
-	]
+  "info": {
+    "_postman_id": "4a454a40-1997-43f2-8cdf-6cc060418a03",
+    "name": "Fake Store API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "56556935"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();\r\n\r\npm.test(\"Status code is 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"Response contains authentication token\", function () {\r\n    pm.expect(response).to.have.property(\"token\");\r\n});\r\n\r\npm.test(\"Authentication token is a non-empty string\", function () {\r\n    pm.expect(response.token).to.be.a(\"string\");\r\n    pm.expect(response.token).to.not.be.empty;\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"johnd\",\r\n  \"password\": \"m38rmF$\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/login",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get all users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is an array\", function () {\r\n    pm.expect(response).to.be.an(\"array\");\r\n});\r\n\r\npm.test(\"Users are returned\", function () {\r\n    pm.expect(response.length).to.be.above(0);\r\n});\r\n\r\npm.test(\"Each user has required fields\", function () {\r\n    response.forEach(user => {\r\n        pm.expect(user).to.have.property(\"id\");\r\n        pm.expect(user.id).to.be.a(\"number\");\r\n\r\n        pm.expect(user).to.have.property(\"username\");\r\n        pm.expect(user.username).to.be.a(\"string\");\r\n\r\n        pm.expect(user).to.have.property(\"email\");\r\n        pm.expect(user.email).to.be.a(\"string\");\r\n\r\n        pm.expect(user).to.have.property(\"address\");\r\n        pm.expect(user.address).to.be.an(\"object\");\r\n    });\r\n});\r\n\r\npm.test(\"Each address has required fields\", function () {\r\n    response.forEach(user => {\r\n        pm.expect(user.address).to.have.property(\"city\");\r\n        pm.expect(user.address).to.have.property(\"street\");\r\n        pm.expect(user.address).to.have.property(\"number\");\r\n        pm.expect(user.address).to.have.property(\"zipcode\");\r\n        pm.expect(user.address).to.have.property(\"geolocation\");\r\n    });\r\n});\r\n\r\npm.test(\"Each address has valid geolocation structure\", function () {\r\n    response.forEach(user => {\r\n        pm.expect(user.address.geolocation).to.have.property(\"lat\");\r\n        pm.expect(user.address.geolocation).to.have.property(\"long\");\r\n    });\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/users",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get a single user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"User ID matches requested user\", function () {\r\n    pm.expect(response.id).to.eql(Number(pm.environment.get(\"singleUserId\")));\r\n});\r\n\r\npm.test(\"User has required fields\", function () {\r\n    pm.expect(response).to.have.property(\"id\");\r\n    pm.expect(response.id).to.be.a(\"number\");\r\n\r\n    pm.expect(response).to.have.property(\"username\");\r\n    pm.expect(response.username).to.be.a(\"string\");\r\n\r\n    pm.expect(response).to.have.property(\"email\");\r\n    pm.expect(response.email).to.be.a(\"string\");\r\n\r\n    pm.expect(response).to.have.property(\"phone\");\r\n    pm.expect(response.phone).to.be.a(\"string\");\r\n});\r\n\r\npm.test(\"User name structure is valid\", function () {\r\n    pm.expect(response.name).to.be.an(\"object\");\r\n    pm.expect(response.name).to.have.property(\"firstname\");\r\n    pm.expect(response.name).to.have.property(\"lastname\");\r\n});\r\n\r\npm.test(\"User address structure is valid\", function () {\r\n    pm.expect(response.address).to.be.an(\"object\");\r\n\r\n    pm.expect(response.address).to.have.property(\"city\");\r\n    pm.expect(response.address).to.have.property(\"street\");\r\n    pm.expect(response.address).to.have.property(\"number\");\r\n    pm.expect(response.address).to.have.property(\"zipcode\");\r\n});\r\n\r\npm.test(\"User geolocation structure is valid\", function () {\r\n    pm.expect(response.address.geolocation).to.be.an(\"object\");\r\n    pm.expect(response.address.geolocation).to.have.property(\"lat\");\r\n    pm.expect(response.address.geolocation).to.have.property(\"long\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/users/{{singleUserId}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "{{singleUserId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add a new user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();\r\n\r\npm.test(\"Status code is 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"Response contains user ID\", function () {\r\n    pm.expect(response).to.have.property(\"id\");\r\n    pm.expect(response.id).to.be.a(\"number\");\r\n});\r\n\r\npm.environment.set(\"createdUserId\", response.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"qa_tester\",\r\n  \"email\": \"qa.tester@example.com\",\r\n  \"password\": \"QaTest@123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update a user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Username was updated\", function () {\r\n    pm.expect(response.username).to.eql(\"qa_tester_updated\");\r\n});\r\n\r\npm.test(\"Email was updated\", function () {\r\n    pm.expect(response.email).to.eql(\"qa.updated@example.com\");\r\n});\r\n\r\npm.test(\"Password was updated\", function () {\r\n    pm.expect(response.password).to.eql(\"UpdatedQa@123\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"qa_tester_updated\",\r\n    \"email\": \"qa.updated@example.com\",\r\n    \"password\": \"UpdatedQa@123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/{{createdUserId}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "{{createdUserId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response body is null\", function () {\r\n    pm.expect(pm.response.json()).to.eql(null);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/users/{{createdUserId}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "{{createdUserId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Product",
+      "item": [
+        {
+          "name": "Get all products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is an array\", function () {\r\n    pm.expect(pm.response.json()).to.be.an(\"array\");\r\n});\r\n\r\npm.test(\"Products are returned\", function () {\r\n    pm.expect(pm.response.json().length).to.be.above(0);\r\n});\r\n\r\npm.test(\"Each product contains required fields\", function () {\r\n    const products = pm.response.json();\r\n\r\n    products.forEach(product => {\r\n        pm.expect(product).to.have.property(\"id\");\r\n        pm.expect(product).to.have.property(\"title\");\r\n        pm.expect(product).to.have.property(\"price\");\r\n        pm.expect(product).to.have.property(\"category\");\r\n    });\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/products",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add a new product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();\r\n\r\npm.test(\"Status code is 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"Response contains generated product ID\", function () {\r\n    pm.expect(response.id).to.be.a(\"number\");\r\n});\r\n\r\npm.test(\"Product title matches request\", function () {\r\n    pm.expect(response.title).to.eql(\"QA Test Laptop\");\r\n});\r\n\r\npm.test(\"Product price matches request\", function () {\r\n    pm.expect(response.price).to.eql(899.99);\r\n});\r\n\r\npm.test(\"Product category matches request\", function () {\r\n    pm.expect(response.category).to.eql(\"electronics\");\r\n});\r\n\r\npm.environment.set(\"createdProductId\", response.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"QA Test Laptop\",\r\n  \"price\": 899.99,\r\n  \"description\": \"Laptop created for API automation testing\",\r\n  \"category\": \"electronics\",\r\n  \"image\": \"https://i.pravatar.cc\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/products",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get a single product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is an object\", function () {\r\n    pm.expect(pm.response.json()).to.be.an(\"object\");\r\n});\r\n\r\npm.test(\"Product ID matches requested ID\", function () {\r\n    const product = pm.response.json();\r\n    pm.expect(product.id).to.eql(Number(pm.environment.get(\"productId\")));\r\n});\r\n\r\npm.test(\"Product contains required fields\", function () {\r\n    const product = pm.response.json();\r\n\r\n    pm.expect(product).to.have.property(\"id\");\r\n    pm.expect(product).to.have.property(\"title\");\r\n    pm.expect(product).to.have.property(\"price\");\r\n    pm.expect(product).to.have.property(\"description\");\r\n    pm.expect(product).to.have.property(\"category\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/products/{{singleProductId}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "products",
+                "{{singleProductId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update a product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response contains product ID\", function () {\r\n    pm.expect(response.id).to.be.a(\"number\");\r\n});\r\n\r\npm.test(\"Updated product title is correct\", function () {\r\n    pm.expect(response.title).to.eql(\"QA Test Laptop - Updated\");\r\n});\r\n\r\npm.test(\"Updated product price is correct\", function () {\r\n    pm.expect(response.price).to.eql(999.99);\r\n});\r\n\r\npm.test(\"Updated product description is correct\", function () {\r\n    pm.expect(response.description).to.eql(\r\n        \"Updated product for API automation testing\"\r\n    );\r\n});\r\n\r\npm.test(\"Updated product category is correct\", function () {\r\n    pm.expect(response.category).to.eql(\"electronics\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"QA Test Laptop - Updated\",\r\n  \"price\": 999.99,\r\n  \"description\": \"Updated product for API automation testing\",\r\n  \"category\": \"electronics\",\r\n  \"image\": \"https://i.pravatar.cc\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/products/{{createdProductId}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "products",
+                "{{createdProductId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response body is empty\", function () {\r\n    pm.expect(pm.response.text()).to.eql(\"\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/products/{{createdProductId}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "products",
+                "{{createdProductId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
 }
